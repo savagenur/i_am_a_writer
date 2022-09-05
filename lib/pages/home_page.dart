@@ -10,16 +10,11 @@ import '../models/chapter.dart';
 import '../services/uniqie_id.dart';
 import 'add_book_screen.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   static const id = '/';
   HomePage({Key? key}) : super(key: key);
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  TextEditingController titleController = TextEditingController(text: '');
+ 
   final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
 
   @override

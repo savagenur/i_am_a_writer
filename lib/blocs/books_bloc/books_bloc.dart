@@ -44,6 +44,7 @@ class BooksBloc extends HydratedBloc<BooksEvent, BooksState> {
 
   void _onAddBookChapter(AddBookChapterEvent event, Emitter<BooksState> emit) {
     final state = this.state;
+    
     final chapter = event.book.chapters.add(event.chapter);
     emit(BooksState(allBooks: List.of(state.allBooks)));
   }

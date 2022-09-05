@@ -6,6 +6,7 @@ import 'package:i_am_a_writer/pages/add_book_screen.dart';
 import 'package:i_am_a_writer/pages/detail_chapter_page.dart';
 import 'package:i_am_a_writer/services/uniqie_id.dart';
 import 'package:i_am_a_writer/widgets/chapters_list.dart';
+import 'package:intl/intl.dart';
 
 import '../blocs/bloc_exports.dart';
 import '../draft/detail_page.dart';
@@ -24,6 +25,11 @@ class _MyDrawerState extends State<MyDrawer> {
   int _chapters = 0;
   List<Chapter> _selectedItems = [];
   TextEditingController titleController = TextEditingController(text: '');
+  @override
+  void dispose() {
+    titleController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +43,7 @@ class _MyDrawerState extends State<MyDrawer> {
                 children: [
                   Column(
                     children: [
-                      _buildAppBar(booksState, context),
+                      _buildAppBar(booksState, selectedState, context),
                       _buildBooksList(booksState, selectedState),
                       selectedState.selectMode
                           ? Container()
@@ -45,55 +51,7 @@ class _MyDrawerState extends State<MyDrawer> {
                               height: defaultPadding,
                             ),
                       selectedState.selectMode
-                          ? Container(
-                              height: defaultPadding * 4,
-                              decoration: BoxDecoration(
-                                  color: Colors.grey[700],
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(defaultPadding),
-                                    topRight: Radius.circular(defaultPadding),
-                                  )),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  ElevatedButton.icon(
-                                    label: Text("Delete"),
-                                    onPressed: (() {
-                                      booksState.allBooks.forEach((book) {
-                                        book.chapters.forEach((chapter) {
-                                          if (chapter.isDone!) {
-                                            _selectedItems.add(chapter);
-                                          }
-                                        });
-                                      });
-                                      _selectedItems.forEach((chapter) {
-                                        setState(() {
-                                          booksState.allBooks.forEach((book) {
-                                            book.chapters.remove(chapter);
-                                          });
-                                        });
-                                      });
-
-                                      setState(() {
-                                        selectedState.selectMode = false;
-                                      });
-                                    }),
-                                    icon: Icon(
-                                      Icons.delete,
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                  ElevatedButton(
-                                      onPressed: (() {
-                                        selectedState.selectMode =
-                                            !selectedState.selectMode;
-                                        setState(() {});
-                                      }),
-                                      child: Text("Cancel")),
-                                ],
-                              ),
-                            )
+                          ? buildBottomBar(booksState, selectedState)
                           : Container(),
                     ],
                   ),
@@ -106,7 +64,85 @@ class _MyDrawerState extends State<MyDrawer> {
     );
   }
 
-  AppBar _buildAppBar(BooksState booksState, BuildContext context) {
+  Container buildBottomBar(BooksState booksState, SelectedState selectedState) {
+    return Container(
+      height: defaultPadding * 4,
+      decoration: BoxDecoration(
+          color: Colors.grey[700],
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(defaultPadding),
+            topRight: Radius.circular(defaultPadding),
+          )),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          ElevatedButton.icon(
+            label: Text("Delete"),
+            onPressed: (() {
+              // ! Delete all selectedItems
+              booksState.allBooks.forEach((book) {
+                book.chapters.forEach((chapter) {
+                  if (chapter.isSelected!) {
+                    _selectedItems.add(chapter);
+                  }
+                });
+              });
+              _selectedItems.forEach((chapter) {
+                setState(() {
+                  booksState.allBooks.forEach((book) {
+                    book.chapters.remove(chapter);
+                  });
+                });
+              });
+
+              setState(() {
+                selectedState.selectMode = false;
+              });
+            }),
+            icon: Icon(
+              Icons.delete,
+              color: Colors.red,
+            ),
+          ),
+          ElevatedButton(
+              onPressed: () {
+                //! Uncheck all selectedItems
+
+                booksState.allBooks.forEach((book) {
+                  book.chapters.forEach((chapter) {
+                    if (chapter.isSelected!) {
+                      _selectedItems.add(chapter);
+                    }
+                  });
+                });
+                _selectedItems.forEach((selectedChapter) {
+                  setState(() {
+                    booksState.allBooks.forEach((book) {
+                      book.chapters.forEach((chapter) {
+                        if (selectedChapter == chapter) {
+                          int index = book.chapters.indexOf(chapter);
+                          book.chapters
+                            ..remove(chapter)
+                            ..insert(
+                                index, chapter.copyWith(isSelected: false));
+                        }
+                      });
+                    });
+                  });
+                });
+
+                setState(() {
+                  selectedState.selectMode = false;
+                });
+              },
+              child: Text("Cancel")),
+        ],
+      ),
+    );
+  }
+
+  AppBar _buildAppBar(BooksState booksState, SelectedState selectedState,
+      BuildContext context) {
     return AppBar(
       elevation: 0,
       leading: Center(
@@ -120,25 +156,26 @@ class _MyDrawerState extends State<MyDrawer> {
       ))),
       leadingWidth: MediaQuery.of(context).size.width * .4,
       actions: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ElevatedButton.icon(
+        IconButton(
+            onPressed: () {
+              selectedState.isZoomIn = !selectedState.isZoomIn;
+              booksState.allBooks.forEach((book) {
+                int index = booksState.allBooks.indexOf(book);
+                booksState.allBooks.remove(book);
+                booksState.allBooks.insert(
+                    index, book.copyWith(isExpanded: selectedState.isZoomIn));
+              });
+              setState(() {});
+            },
+            icon: selectedState.isZoomIn
+                ? Icon(Icons.zoom_out)
+                : Icon(Icons.zoom_in)),
+        IconButton(
             onPressed: () {
               AddBook()
                   .addBook(context: context, titleController: titleController);
             },
-            icon: Icon(
-              Icons.add,
-              color: Colors.black,
-            ),
-            label: Text("Add Book", style: TextStyle(color: Colors.black)),
-            style: ElevatedButton.styleFrom(
-                primary: buttonColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(defaultPadding * 2),
-                )),
-          ),
-        )
+            icon: Icon(Icons.create_new_folder))
       ],
     );
   }
@@ -156,41 +193,42 @@ class _MyDrawerState extends State<MyDrawer> {
             ),
             BlocBuilder<ChaptersBloc, ChaptersState>(
               builder: (context, state) {
-                return ExpansionPanelList.radio(
-                  elevation: 0,
+                return ExpansionPanelList(
+                  expandedHeaderPadding: EdgeInsets.only(left: 10, top: 10),
+                  expansionCallback: (panelIndex, isExpanded) {
+                    setState(() {
+                      booksState.allBooks[panelIndex].isExpanded =
+                          !booksState.allBooks[panelIndex].isExpanded!;
+                    });
+                  },
+                  animationDuration: Duration(milliseconds: 800),
                   children: booksState.allBooks.map((book) {
                     List<Chapter> chapters = book.chapters;
-                    // booksState.allBooks.forEach((book) {
-                    //   book.chapters.forEach((chapter) {
-                    //     if (chapter.isDone!) {
-                    //       _selectedItems.add(chapter);
-                    //     }
-                    //   });
-                    // });
-                    return ExpansionPanelRadio(
+
+                    return ExpansionPanel(
+                        backgroundColor: book.isExpanded!
+                            ? Colors.grey[900]
+                            : Colors.grey[850],
                         canTapOnHeader: true,
                         headerBuilder: (context, isExpanded) {
                           return GestureDetector(
                             onLongPress: () {
                               _showDialog(context, book.title, book);
-                              // _bottomSheetMenu(context);
                             },
                             child: ListTile(
+                              tileColor: Colors.transparent,
                               minLeadingWidth: 10,
-                              selectedTileColor:
-                                  isExpanded ? Colors.amber : Colors.black,
-                              selectedColor:
-                                  isExpanded ? Colors.amber : Colors.black,
-                              contentPadding: EdgeInsets.only(
-                                  left: defaultPadding,
-                                  top: defaultPadding / 2,
-                                  bottom: defaultPadding / 2),
                               isThreeLine: true,
                               subtitle: Row(
                                 children: [
                                   Chip(
                                       label: Text(
-                                          'Chapters: ${book.chapters.length}'))
+                                    'Chapters: ${book.chapters.length}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall!
+                                        .copyWith(fontWeight: FontWeight.bold),
+                                  ))
                                 ],
                               ),
                               title: Text(
@@ -202,6 +240,9 @@ class _MyDrawerState extends State<MyDrawer> {
                               trailing: IconButton(
                                   onPressed: () {
                                     var chapter = Chapter(
+                                      dateTime: DateFormat('d/M/y')
+                                          .add_Hm()
+                                          .format(DateTime.now()),
                                       title: '',
                                       id: getUid(),
                                       content: '',
@@ -216,7 +257,6 @@ class _MyDrawerState extends State<MyDrawer> {
                                     //         chapter: chapter, book: book));
                                   },
                                   icon: CircleAvatar(
-                                      radius: defaultPadding,
                                       backgroundColor: buttonColor,
                                       child: Icon(Icons.add))),
                             ),
@@ -227,7 +267,7 @@ class _MyDrawerState extends State<MyDrawer> {
                           chaptersList: chapters,
                           book: book,
                         ),
-                        value: book.id);
+                        isExpanded: book.isExpanded!);
                   }).toList(),
                 );
               },

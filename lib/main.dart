@@ -39,7 +39,11 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         onGenerateRoute: appRouter.onGenerateRoute,
         theme: ThemeData(
-          primaryColor: buttonColor,
+          
+          appBarTheme: AppBarTheme(backgroundColor: primaryColor),
+          primaryColor: primaryColor,
+          primarySwatch: Colors.grey,
+          primaryColorDark: primaryColor,
             textTheme: GoogleFonts.ubuntuTextTheme(ThemeData.dark().textTheme),
             brightness: Brightness.dark,
             floatingActionButtonTheme:

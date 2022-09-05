@@ -39,7 +39,7 @@ class ChaptersBloc extends HydratedBloc<ChaptersEvent, ChaptersState> {
     final allChapters = List.of(state.allChapters)
       ..remove(event.chapter)
       // ..add(event.newChapter);
-    ..insert(index, event.newChapter);
+      ..insert(index, event.newChapter);
     emit(
       ChaptersState(
         allChapters: allChapters,
@@ -52,9 +52,9 @@ class ChaptersBloc extends HydratedBloc<ChaptersEvent, ChaptersState> {
     final chapter = event.chapter;
     int index = state.allChapters.indexOf(chapter);
     List<Chapter> allChapters = List.from(state.allChapters)..remove(chapter);
-    chapter.isDone == false
-        ? allChapters.insert(index, chapter.copyWith(isDone: true))
-        : allChapters.insert(index, chapter.copyWith(isDone: false));
+    chapter.isSelected == false
+        ? allChapters.insert(index, chapter.copyWith(isSelected: true))
+        : allChapters.insert(index, chapter.copyWith(isSelected: false));
     emit(ChaptersState(allChapters: allChapters));
   }
 

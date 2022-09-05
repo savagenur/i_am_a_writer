@@ -4,6 +4,7 @@ import 'package:i_am_a_writer/constants/constants.dart';
 import 'package:i_am_a_writer/main.dart';
 import 'package:i_am_a_writer/models/book.dart';
 import 'package:i_am_a_writer/pages/home_page.dart';
+import 'package:string_stats/string_stats.dart';
 
 import '../pages/my_drawer.dart';
 import '../models/chapter.dart';
@@ -25,19 +26,18 @@ class _DetailChapterPageState extends State<DetailChapterPage> {
   late TextEditingController contentController;
   late String title;
   late String content;
-  late List<String> wordsCount;
+  late int wordsCount;
 
   @override
   void initState() {
     titleController = TextEditingController(text: widget.chapter.title);
     contentController = TextEditingController(text: widget.chapter.content);
     content = widget.chapter.content;
-    wordsCount = contentController.text.split(' ');
-
+    wordsCount = 0;
     contentController.addListener(() {
       setState(() {
         content = contentController.text;
-        wordsCount = content.split(' ');
+        wordsCount = wordCount(content);
       });
 
       title = titleController.text;
@@ -45,7 +45,12 @@ class _DetailChapterPageState extends State<DetailChapterPage> {
 
     super.initState();
   }
-
+@override
+void dispose() {
+  titleController.dispose();
+    contentController.dispose();
+  super.dispose();
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,8 +73,7 @@ class _DetailChapterPageState extends State<DetailChapterPage> {
                   ],
                 ),
                 Positioned(
-                    right: 0,
-                    child: Chip(label: Text((wordsCount.length).toString())))
+                    right: 0, child: Chip(label: Text((wordsCount).toString())))
               ],
             ),
             TextField(
@@ -121,27 +125,27 @@ class _DetailChapterPageState extends State<DetailChapterPage> {
 
     if (titleController.text == '' && contentController.text == '') {
       book.chapters.remove(chapter);
-      context
-          .read<BooksBloc>()
-          .add(RefreshBookEvent( book: book));
+      context.read<BooksBloc>().add(RefreshBookEvent(book: book));
       Navigator.pop(context);
     } else if (titleController.text == '') {
       title = '';
       book.chapters.remove(chapter);
-      book.chapters
-          .insert(index, chapter.copyWith(title: title, content: content));
-      context
-          .read<BooksBloc>()
-          .add(RefreshBookEvent( book: book));
+      book.chapters.insert(
+          index,
+          chapter.copyWith(
+              title: title, content: content, wordsCount: wordsCount));
+      context.read<BooksBloc>().add(RefreshBookEvent(book: book));
 
       Navigator.pop(context);
     } else {
       book.chapters.remove(chapter);
-      book.chapters.insert(index,
-          chapter.copyWith(title: titleController.text, content: content));
-      context
-          .read<BooksBloc>()
-          .add(RefreshBookEvent( book: book));
+      book.chapters.insert(
+          index,
+          chapter.copyWith(
+              title: titleController.text,
+              content: content,
+              wordsCount: wordsCount));
+      context.read<BooksBloc>().add(RefreshBookEvent(book: book));
       Navigator.pop(context);
     }
   }

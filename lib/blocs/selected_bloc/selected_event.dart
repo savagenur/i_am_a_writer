@@ -17,4 +17,14 @@ class ToggleSelectModeEvent extends SelectedEvent {
   List<Object> get props => [
         toggle,
       ];
+}class ZoomInEvent extends SelectedEvent {
+  final bool toggle;
+  const ZoomInEvent({
+    required this.toggle,
+  });
+
+  @override
+  List<Object> get props => [
+        toggle,
+      ];
 }

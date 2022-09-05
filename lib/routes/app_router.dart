@@ -12,7 +12,9 @@ class AppRouter {
   Route? onGenerateRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
       case ChaptersPage.id:
-        return MaterialPageRoute(builder: (_) => ChaptersPage());case HomePage.id:
+        return MaterialPageRoute(builder: (_) => ChaptersPage());
+      case HomePage.id:
+      
         return MaterialPageRoute(builder: (_) => HomePage());
       case DetailPage.id:
         Chapter arguments = routeSettings.arguments as Chapter;

@@ -5,13 +5,27 @@ import 'package:i_am_a_writer/services/uniqie_id.dart';
 import '../blocs/bloc_exports.dart';
 import '../models/chapter.dart';
 
-class AddChapterScreen extends StatelessWidget {
+class AddChapterScreen extends StatefulWidget {
   AddChapterScreen({
     Key? key,
   }) : super(key: key);
 
+  @override
+  State<AddChapterScreen> createState() => _AddChapterScreenState();
+}
+
+class _AddChapterScreenState extends State<AddChapterScreen> {
   TextEditingController titleController = TextEditingController();
+
   TextEditingController contentController = TextEditingController();
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    contentController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -46,6 +60,7 @@ class AddChapterScreen extends StatelessWidget {
                 ElevatedButton(
                     onPressed: () {
                       var chapter = Chapter(
+                        dateTime: '',
                         title: titleController.text,
                         content: contentController.text,
                         id: getUid(),

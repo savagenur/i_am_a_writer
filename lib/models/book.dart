@@ -1,4 +1,3 @@
-
 import 'package:equatable/equatable.dart';
 
 import 'package:i_am_a_writer/models/chapter.dart';
@@ -8,20 +7,20 @@ class Book extends Equatable {
   final String id;
   final List<Chapter> chapters;
 
-  bool? isDone;
-  bool? isDeleted;
+  bool? isSelected;
+  bool? isExpanded;
 
   bool? isFavorite;
   Book({
     required this.title,
     required this.id,
     required this.chapters,
-    this.isDone,
-    this.isDeleted,
+    this.isSelected,
+    this.isExpanded,
     this.isFavorite,
   }) {
-    isDone = isDone ?? false;
-    isDeleted = isDeleted ?? false;
+    isSelected = isSelected ?? false;
+    isExpanded = isExpanded ?? false;
     isFavorite = isFavorite ?? false;
   }
 
@@ -29,36 +28,36 @@ class Book extends Equatable {
     String? title,
     String? id,
     List<Chapter>? chapters,
-    bool? isDone,
-    bool? isDeleted,
+    bool? isSelected,
+    bool? isExpanded,
     bool? isFavorite,
   }) {
     return Book(
       title: title ?? this.title,
       id: id ?? this.id,
       chapters: chapters ?? this.chapters,
-      isDone: isDone ?? this.isDone,
-      isDeleted: isDeleted ?? this.isDeleted,
+      isSelected: isSelected ?? this.isSelected,
+      isExpanded: isExpanded ?? this.isExpanded,
       isFavorite: isFavorite ?? this.isFavorite,
     );
   }
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-  
+
     result.addAll({'title': title});
     result.addAll({'id': id});
     result.addAll({'chapters': chapters.map((x) => x.toMap()).toList()});
-    if(isDone != null){
-      result.addAll({'isDone': isDone});
+    if (isSelected != null) {
+      result.addAll({'isSelected': isSelected});
     }
-    if(isDeleted != null){
-      result.addAll({'isDeleted': isDeleted});
+    if (isExpanded != null) {
+      result.addAll({'isExpanded': isExpanded});
     }
-    if(isFavorite != null){
+    if (isFavorite != null) {
       result.addAll({'isFavorite': isFavorite});
     }
-  
+
     return result;
   }
 
@@ -66,9 +65,10 @@ class Book extends Equatable {
     return Book(
       title: map['title'] ?? '',
       id: map['id'] ?? '',
-      chapters: List<Chapter>.from(map['chapters']?.map((x) => Chapter.fromMap(x))),
-      isDone: map['isDone'],
-      isDeleted: map['isDeleted'],
+      chapters:
+          List<Chapter>.from(map['chapters']?.map((x) => Chapter.fromMap(x))),
+      isSelected: map['isSelected'],
+      isExpanded: false,
       isFavorite: map['isFavorite'],
     );
   }
@@ -77,10 +77,8 @@ class Book extends Equatable {
         title,
         chapters,
         id,
-        isDeleted,
-        isDone,
+        // isExpanded,
+        isSelected,
         isFavorite,
       ];
-
-
 }

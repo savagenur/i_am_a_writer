@@ -3,6 +3,7 @@ import 'package:i_am_a_writer/models/book.dart';
 import 'package:i_am_a_writer/models/chapter.dart';
 import 'package:i_am_a_writer/pages/detail_chapter_page.dart';
 import 'package:i_am_a_writer/services/uniqie_id.dart';
+import 'package:intl/intl.dart';
 
 import '../blocs/bloc_exports.dart';
 import '../constants/constants.dart';
@@ -56,11 +57,13 @@ class AddBook {
                             onPressed: () {
                               var title = titleController.text;
                               var chapter = Chapter(
+                                dateTime: DateFormat.yMd().add_Hm().format(DateTime.now()),
                                   title: '<Untitled>',
                                   id: getUid(),
                                   content: '');
                               var book = Book(
                                   chapters: [chapter],
+                                  isExpanded: false,
                                   title: title == ''
                                       ? "<No Name>"
                                       : titleController.text,
@@ -69,10 +72,10 @@ class AddBook {
                                   .read<BooksBloc>()
                                   .add(AddBookEvent(book: book));
                               Navigator.pop(context);
-                              Navigator.of(context).pushNamed(
-                                  DetailChapterPage.id,
-                                  arguments: DetailChapterPage(
-                                      chapter: chapter, book: book));
+                              // Navigator.of(context).pushNamed(
+                              //     DetailChapterPage.id,
+                              //     arguments: DetailChapterPage(
+                              //         chapter: chapter, book: book));
                             },
                             child: Text('Add'),
                           )

@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:i_am_a_writer/constants/constants.dart';
 import 'package:i_am_a_writer/pages/detail_chapter_page.dart';
+import 'package:i_am_a_writer/pages/home_page.dart';
 
 import '../blocs/bloc_exports.dart';
 import '../draft/detail_page.dart';
@@ -24,7 +25,6 @@ class BookChapterList extends StatefulWidget {
 }
 
 class _BookChapterListState extends State<BookChapterList> {
-  
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SelectedBloc, SelectedState>(
@@ -44,16 +44,25 @@ class _BookChapterListState extends State<BookChapterList> {
                 return ListTile(
                   contentPadding: EdgeInsets.all(defaultPadding * .5),
                   leading: CircleAvatar(
-                    radius: 15,
-                    child: Text((index + 1).toString()),
+                    backgroundColor: Colors.grey[850],
+                    radius: 10,
+                    child: Text(
+                      (index + 1).toString(),
+                      style:
+                          TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    ),
                   ),
                   minLeadingWidth: defaultPadding,
                   onTap: () {
-                    Navigator.of(context).pushNamed(DetailChapterPage.id,
-                        arguments: DetailChapterPage(
-                          chapter: chapter,
-                          book: widget.book,
-                        ));
+                    selectedState.selectMode
+                        ? setState(() {
+                            chapter.isSelected = !chapter.isSelected!;
+                          })
+                        : Navigator.of(context).pushNamed(DetailChapterPage.id,
+                            arguments: DetailChapterPage(
+                              chapter: chapter,
+                              book: widget.book,
+                            ));
                   },
                   onLongPress: () {
                     // widget.chaptersList.remove(chapter);
@@ -61,6 +70,7 @@ class _BookChapterListState extends State<BookChapterList> {
                     widget.refresh(widget.chaptersList);
                     setState(() {
                       selectedState.selectMode = !selectedState.selectMode;
+                      chapter.isSelected = !chapter.isSelected!;
                     });
                   },
                   title: Text(
@@ -70,30 +80,80 @@ class _BookChapterListState extends State<BookChapterList> {
                     style: Theme.of(context)
                         .textTheme
                         .subtitle1!
-                        .copyWith(fontWeight: FontWeight.w600, fontSize: 18),
+                        .copyWith(fontWeight: FontWeight.w600, fontSize: 16),
                   ),
                   subtitle: chapter.content.isEmpty
-                      ? Text(
-                          '<--->',
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle2!
-                              .copyWith(fontStyle: FontStyle.italic),
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              '<--->',
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle2!
+                                  .copyWith(
+                                      fontStyle: FontStyle.italic,
+                                      fontSize: 12,
+                                      color: Colors.grey[600]),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              "Updated at ${chapter.dateTime}, ${chapter.wordsCount} words",
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle2!
+                                  .copyWith(
+                                      fontSize: 12, color: Colors.grey[600]),
+                            ),
+                          ],
                         )
-                      : Text(
-                          chapter.content,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle2!
-                              .copyWith(fontStyle: FontStyle.italic),
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              chapter.content,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 3,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle2!
+                                  .copyWith(
+                                      fontStyle: FontStyle.italic,
+                                      fontSize: 12,
+                                      color: Colors.grey[600]),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              "Updated at ${chapter.dateTime}, ${chapter.wordsCount} words",
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle2!
+                                  .copyWith(
+                                      fontSize: 12, color: Colors.grey[600]),
+                            ),
+                          ],
                         ),
                   trailing: selectedState.selectMode
                       ? Checkbox(
-                          value: chapter.isDone,
+                          value: chapter.isSelected,
                           onChanged: (value) {
-                            chapter.isDone = value;
+                            chapter.isSelected = value;
                             setState(() {});
                           },
                         )
@@ -109,7 +169,7 @@ class _BookChapterListState extends State<BookChapterList> {
 
   // void _bottomSheetMenu(context) {
   //   showModalBottomSheet(
-      
+
   //     backgroundColor: Color.fromARGB(255, 76, 76, 78),
   //       context: context,
   //       builder: (context) => Container(

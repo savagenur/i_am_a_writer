@@ -49,7 +49,7 @@ class ChaptersPage extends StatelessWidget {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              var chapter = Chapter(title: '', id: getUid(), content: '');
+              var chapter = Chapter(dateTime: '', title: '', id: getUid(), content: '');
               context.read<ChaptersBloc>().add(AddChapterEvent(
                     chapter: chapter,
                   ));

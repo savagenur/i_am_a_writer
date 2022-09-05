@@ -63,7 +63,7 @@ class ChaptersList extends StatelessWidget {
             ],
           ),
           trailing: Checkbox(
-            value: chapter.isDone,
+            value: chapter.isSelected,
             onChanged: (value) {
               context.read<ChaptersBloc>().add(
                     UpdateChapterEvent(chapter: chapter),
