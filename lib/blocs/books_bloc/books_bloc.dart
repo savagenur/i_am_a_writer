@@ -14,7 +14,8 @@ class BooksBloc extends HydratedBloc<BooksEvent, BooksState> {
     on<DeleteBookEvent>(_onDeleteBook);
     on<RemoveBookEvent>(_onRemoveBook);
 
-    on<AddBookChapterEvent>(_onAddBookChapter);
+    on<AddChapterEvent>(_onAddChapter);
+    on<DeleteChapterEvent>(_onDeleteChapter);
     on<RefreshBookEvent>(_onRefreshBook);
     on<RenameBookEvent>(_onRenameBook);
   }
@@ -42,11 +43,28 @@ class BooksBloc extends HydratedBloc<BooksEvent, BooksState> {
 
   void _onRemoveBook(RemoveBookEvent event, Emitter<BooksState> emit) {}
 
-  void _onAddBookChapter(AddBookChapterEvent event, Emitter<BooksState> emit) {
+  void _onAddChapter(AddChapterEvent event, Emitter<BooksState> emit) {
     final state = this.state;
-    
-    final chapter = event.book.chapters.add(event.chapter);
-    emit(BooksState(allBooks: List.of(state.allBooks)));
+    print('book');
+
+    final book = event.book;
+   List<Chapter> chapters = book.chapters..add(event.chapter);
+    final allBooks = List.of(state.allBooks)
+      ..remove(event.book)
+      ..insert(List.of(state.allBooks).indexOf(event.book), book.copyWith(chapters: chapters));
+    emit(BooksState(allBooks: allBooks));
+  }
+
+  void _onDeleteChapter(DeleteChapterEvent event, Emitter<BooksState> emit) {
+    final state = this.state;
+    final books = List.of(state.allBooks);
+    final chapters = event.chapters;
+    chapters.forEach((chapter) {
+      books.forEach((book) {
+        book.chapters.remove(chapter);
+      });
+    });
+    emit(BooksState(allBooks: books));
   }
 
   void _onRenameBook(RenameBookEvent event, Emitter<BooksState> emit) {
@@ -54,6 +72,7 @@ class BooksBloc extends HydratedBloc<BooksEvent, BooksState> {
     final book = event.book;
     final renamedBook = event.renamedBook;
     int index = List.of(state.allBooks).indexOf(book);
+
     final allBooks = List.of(state.allBooks)
       ..remove(book)
       ..insert(index, renamedBook);

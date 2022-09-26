@@ -87,13 +87,10 @@ class _MyDrawerState extends State<MyDrawer> {
                   }
                 });
               });
-              _selectedItems.forEach((chapter) {
-                setState(() {
-                  booksState.allBooks.forEach((book) {
-                    book.chapters.remove(chapter);
-                  });
-                });
-              });
+
+              context
+                  .read<BooksBloc>()
+                  .add(DeleteChapterEvent(chapters: _selectedItems));
 
               setState(() {
                 selectedState.selectMode = false;
@@ -173,13 +170,17 @@ class _MyDrawerState extends State<MyDrawer> {
         IconButton(
             onPressed: () {
               AddBook()
-                  .addBook(context: context, titleController: titleController);
+                  .addBook(context: context, titleController: titleController, refreshScreen: refreshScreen);
             },
             icon: Icon(Icons.create_new_folder))
       ],
     );
   }
-
+void refreshScreen( ){
+  setState(() {
+    
+  });
+}
   Expanded _buildBooksList(
     BooksState booksState,
     SelectedState selectedState,
@@ -248,8 +249,9 @@ class _MyDrawerState extends State<MyDrawer> {
                                       content: '',
                                     );
                                     context.read<BooksBloc>().add(
-                                        AddBookChapterEvent(
+                                        AddChapterEvent(
                                             book: book, chapter: chapter));
+                                    book.isExpanded = true;
                                     setState(() {});
                                     // Navigator.of(context).pushNamed(
                                     //     DetailChapterPage.id,
@@ -308,6 +310,7 @@ class _MyDrawerState extends State<MyDrawer> {
                           Navigator.pop(context);
 
                           AddBook().addBook(
+                            refreshScreen:refreshScreen,
                               context: context,
                               titleController:
                                   TextEditingController(text: book.title),

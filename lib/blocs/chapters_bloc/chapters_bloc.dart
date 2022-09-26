@@ -8,13 +8,13 @@ part 'chapters_state.dart';
 
 class ChaptersBloc extends HydratedBloc<ChaptersEvent, ChaptersState> {
   ChaptersBloc() : super(const ChaptersState()) {
-    on<AddChapterEvent>(_onAddChapter);
+    on<AddChapteREvent>(_onAddChapter);
     on<UpdateChapterEvent>(_onUpdateChapter);
     on<UpgradeChapterEvent>(_onUpgradeChapter);
-    on<DeleteChapterEvent>(_onDeleteChapter);
+    on<DeleteChapteREvent>(_onDeleteChapter);
     on<ContentCharachterCountEvent>(_onContentCount);
   }
-  void _onAddChapter(AddChapterEvent event, Emitter<ChaptersState> emit) {
+  void _onAddChapter(AddChapteREvent event, Emitter<ChaptersState> emit) {
     final state = this.state;
     emit(
       ChaptersState(
@@ -58,7 +58,7 @@ class ChaptersBloc extends HydratedBloc<ChaptersEvent, ChaptersState> {
     emit(ChaptersState(allChapters: allChapters));
   }
 
-  void _onDeleteChapter(DeleteChapterEvent event, Emitter<ChaptersState> emit) {
+  void _onDeleteChapter(DeleteChapteREvent event, Emitter<ChaptersState> emit) {
     final state = this.state;
     final chapter = event.chapter;
     List<Chapter> allChapters = List.of(state.allChapters)..remove(chapter);

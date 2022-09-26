@@ -107,7 +107,7 @@ class _DetailPageState extends State<DetailPage> {
     if (titleController.text == '' && contentController.text == '') {
       context
           .read<ChaptersBloc>()
-          .add(DeleteChapterEvent(chapter: widget.chapter));
+          .add(DeleteChapteREvent(chapter: widget.chapter));
       Navigator.pop(context);
     } else if (titleController.text == '') {
       titleController.text = 'Untitled*';

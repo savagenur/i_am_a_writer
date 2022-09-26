@@ -65,7 +65,7 @@ class _AddChapterScreenState extends State<AddChapterScreen> {
                         content: contentController.text,
                         id: getUid(),
                       );
-                      context.read<ChaptersBloc>().add(AddChapterEvent(
+                      context.read<ChaptersBloc>().add(AddChapteREvent(
                             chapter: chapter,
                           ));
                       Navigator.pop(context);

@@ -2,7 +2,7 @@ part of 'books_bloc.dart';
 
 abstract class BooksEvent extends Equatable {
   const BooksEvent();
-
+  
   @override
   List<Object> get props => [];
 }
@@ -12,8 +12,6 @@ class AddBookEvent extends BooksEvent {
   AddBookEvent({
     required this.book,
   });
-  @override
-  List<Object> get props => [book];
 }
 
 class RenameBookEvent extends BooksEvent {
@@ -23,8 +21,6 @@ class RenameBookEvent extends BooksEvent {
     required this.book,
     required this.renamedBook,
   });
-  @override
-  List<Object> get props => [book,renamedBook];
 }
 
 class UpdateBookEvent extends BooksEvent {
@@ -32,8 +28,6 @@ class UpdateBookEvent extends BooksEvent {
   UpdateBookEvent({
     required this.book,
   });
-  @override
-  List<Object> get props => [book];
 }
 
 class DeleteBookEvent extends BooksEvent {
@@ -41,7 +35,6 @@ class DeleteBookEvent extends BooksEvent {
   DeleteBookEvent({
     required this.book,
   });
-  List<Object> get props => [book];
 }
 
 class RemoveBookEvent extends BooksEvent {
@@ -49,7 +42,6 @@ class RemoveBookEvent extends BooksEvent {
   RemoveBookEvent({
     required this.book,
   });
-  List<Object> get props => [book];
 }
 
 class RefreshBookEvent extends BooksEvent {
@@ -57,15 +49,22 @@ class RefreshBookEvent extends BooksEvent {
   RefreshBookEvent({
     required this.book,
   });
-  List<Object> get props => [book];
 }
 
-class AddBookChapterEvent extends BooksEvent {
+class AddChapterEvent extends BooksEvent {
   final Book book;
   final Chapter chapter;
-  AddBookChapterEvent({
+  AddChapterEvent({
     required this.book,
     required this.chapter,
   });
-  List<Object> get props => [book, chapter];
+ 
+
+}
+
+class DeleteChapterEvent extends BooksEvent {
+  final List<Chapter> chapters;
+  DeleteChapterEvent({
+    required this.chapters,
+  });
 }

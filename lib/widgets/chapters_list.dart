@@ -32,7 +32,7 @@ class ChaptersList extends StatelessWidget {
             );
           },
           onLongPress: () =>
-              context.read<ChaptersBloc>().add(DeleteChapterEvent(
+              context.read<ChaptersBloc>().add(DeleteChapteREvent(
                     chapter: chapter,
                   )),
           title: Column(

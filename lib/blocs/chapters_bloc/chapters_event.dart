@@ -7,9 +7,9 @@ abstract class ChaptersEvent extends Equatable {
   List<Object> get props => [];
 }
  
-class AddChapterEvent extends ChaptersEvent {
+class AddChapteREvent extends ChaptersEvent {
   final Chapter chapter;
-  const AddChapterEvent({
+  const AddChapteREvent({
     required this.chapter,
   });
 
@@ -46,9 +46,9 @@ class UpgradeChapterEvent extends ChaptersEvent {
       ];
 }
 
-class DeleteChapterEvent extends ChaptersEvent {
+class DeleteChapteREvent extends ChaptersEvent {
   final Chapter chapter;
-  const DeleteChapterEvent({
+  const DeleteChapteREvent({
     required this.chapter,
   });
 
